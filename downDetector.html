@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nathan Collinsworth, MP351 Fall of 2023</title>
+        <link rel="stylesheet" href="index.css">
+    </head>
+    <body>
+        <ul class="nav">
+            <li class="nav"><a href="index.html">Home</a></li>
+            <li class="nav"><a href="futureProject.html">Future Projects</a></li>
+          </ul>
+        <h1>Mirror Down Detector</h1>
+        <p>To check out the source code or add the bot to a discord server check out the bot on <a href="https://github.com/Warvan1/Mirror-Down-Detector">github</a></p>
+        <h3>What problem does the Down Detector try to solve?</h3>
+        <p>Currently there is no way to get notified if mirror goes down and to find out if it is down you have to manually check.
+            </br>This is bad because In the event of an outage maintainers might not know its down for several hours.
+        </p>
+        <h3>How does the DownDetector achieve this goal?</h3>
+        <p>Every Minute the Down Detector does the following:</p>
+        <ul>
+            <li>ping mirror.clarkson.edu</li>
+            <li>HTTP GET request to https://mirror.clarkson.edu/status</li>
+            <li>HTTP GET request to https://mirror.clarkson.edu/home</li>
+        </ul>
+        <p>If any of the http requests or the ping does not respond It sends a Discord Message that Mirror is down. 
+            </br>It also sends a message when all services are back up.
+        </p>
+        <h3>Where will it be hosted?</h3>
+        <p>We can't host it in our server room because then if our server room loses power the down detector will also go down and wont detect that Mirror went down.
+            </br>Colo is theoretically a good place to host it because I think it has backup generators however it currently routes all its public traffic through mirror.
+            </br>Currently I have it hosted on a linode cloud server that I own that hasn't gone down in over 200 days and im willing to host it there till colo is able to host it.
+        </p>
+        <h3>How was it made?</h3>
+        <a href="https://dpp.dev/"><img src="images/d++Logo.png" width="150"></img></a>
+        <p>I made the bot in c++ using the D++ Discord api library. <a href="https://dpp.dev/">documentation</a> <a href="https://github.com/brainboxdotcc/DPP">github</a>
+            </br>The bot has two threads each with its own bot object.
+        </p>
+        <ul>
+            <li>The first thread handles all user input using discord slash commands.</li>
+            <li>The second thread runs the down detector every minute and sends messages if Mirror has gone down or has come back up.</li>
+        </ul>
+        <h3>Slash Commands</h3>
+        <p>The bot has three slash commands</p>
+        <ul>
+            <li>/watch-mirror add [@role] : takes a role as input and adds the channel the command is run into the list of channels that receive downdetection messages. (the role is pinged by the bot in that channel in those messages)</li>
+            <li>/watch-mirror delete : deletes the channel from the watch list.</li>
+            <li>/ping [address] : pings a given hostname or ip address.</li>
+        </ul>
+    </body>
+</html>
+
