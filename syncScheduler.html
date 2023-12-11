@@ -11,10 +11,61 @@
         </ul>
         <h1>Mirror Sync Scheduler</h1>
         <p>Check out the source code on <a href="https://github.com/Warvan1/Mirror-Sync-Scheduler">github</a></p>
-        <br/>
-        <h3>Reverse Engineering Old Scheduler</h3>
-        <img src="images/old_sync_scheduler_code.png" width="150"></img>
+        <h3>Old Scheduler</h3>
+        <img src="images/old_sync_scheduler_code.png" width="600"></img>
+        <p>lcm = least common multiple of all Sync Frequencies from all the tasks</p>
+        <p>interval = 1/total_jobs</p>
+        <p style="color:#323740;">(total_jobs = sum of all sync frequencies from all the tasks)</p>
 
+        <h4>Old Scheduler Example</h4>
+        <p>The old scheduler, schedules each job at a different time throuout the day based on the total number of jobs.</p>
+        <p>Example Tasks and Syncs per day:</p>
+        <ul>
+            <li>Red 2</li>
+            <li>Blue 2</li>
+            <li>Yellow 4</li>
+            <li>Purple 4</li>
+            <li>Green 12</li>
+        </ul>
+        <p>lcm = 12</p>
+        <p>Total Syncs = 24</p>
+        <img src="images/old_scheduler.png"></img>
+        <p>This is not Ideal as some tasks can have a large amount of variation in the interval between when they get synced.</p>
+        <p>For Example the green task has a minimum of 1 hour between syncs and a maximum of 5 hours between syncs</p>
+        <p>This problem is even worse with the actual task set for production as some tasks might sync twice in 18 minutes and then not sync again for hours</p>
+
+        <h3>New Scheduler</h3>
+        <img src="images/new_sync_scheduler_code.png"></img>
+        <p style="color:yellow;">interval = 1/lcm</p>
+        <p>Each job now has a list of tasks that run at the same time</p>
+
+        <h4>New Scheduler Example</h4>
+        <p>Using the same example as before I get the following schedule, labeled with X's.</p>
+        <p>I have included the old schedule below for comparison, labeled with circles</p>
+        <img src="images/both_schedulers.png"></img>
+        <p>This is much better because each task is evenly spread throuout the day</p>
+
+        <h3>Running Multiple Tasks at the same time.</h3>
+        <h4>Option 1: all tasks in parallel</h4>
+        <p>At lcm interval 0 all tasks want to run and if we run every task in parallel at the same time that could cause problems</p>
+        <h4>Option 2: all tasks in succession</h4>
+
+        <p>We could create a queue and run all tasks in succession </p> 
+        <p>if there is a really long task or a lot of tasks it could take a long time to get through them all and the queue could get backed up</p>
+        <p>This creates inconsistant intervals for each task again</p>
+
+        <h4>Final Option: Multithreaded Queue</h4>
+        <p>We have a set number of threads that all access the same queue</p>
+        <p>this solves the pure parallel issue: Because Its a set number we have a cap to the number of tasks running at the same time</p>
+        <p>this solves the queue conjestion issue: We avoid congestion because any really long task will only conjest one of the threads</p>
+
+        <h3>Manual Sync</h3>
+        <p>The Sync Scheduler can manually sync tasks in a detached thread</p>
+        <p>Curriently this works by listening std::cin</p>
+        <p>Eventually we will want to attach this to dispach or something else?</p>
+
+        <h3>Logging</h3>
+        <p>The Sync Scheduler logs when it syncs tasks and any errors, to the log server that Juno made, using the logging class that Cary made</p>
     </body>
 </html>
 

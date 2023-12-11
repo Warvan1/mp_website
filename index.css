@@ -8,6 +8,10 @@ h3 {
     color: rgb(178, 7, 7)
 }
 
+h4 {
+    color: rgb(48, 132, 228)
+}
+
 ul.nav {
     border-radius: 15px;
     list-style-type: none;
